@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-import { useFetch } from './hooks/useFetch';
+import { useQuery } from 'react-query';
+import axios from 'axios';
 
 type Repository = {
   id: 'Number';
@@ -9,16 +8,18 @@ type Repository = {
 
 }
 function App() {
-const { data: repositories, isFetch } = useFetch<Repository[]>('https://api.github.com/users/diego3g/repos')
-
+const { data, isFetching } = useQuery<Repository[]>('repos', async() => {
+  const response = await axios.get('https://api.github.com/users/diego3g/repos')
+  return response.data;
+})
 
 
 
   return (
     <div className="App">
 <ul>
-  {isFetch && <p>Carregando...</p>}
-  {repositories?.map(repo => (
+  {isFetching && <p>Carregando...</p>}
+  {data?.map(repo => (
     <li key={repo.id}>
      
       <strong>{repo.full_name}</strong>
